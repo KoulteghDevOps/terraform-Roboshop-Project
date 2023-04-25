@@ -1,5 +1,5 @@
 data "aws_ami" "centos" {
-  owner = ["973714476881"]
+  owners = ["973714476881"]
   most_recent      = true
   name_regex       = "Centos-8-DevOps-Practice"
 }
@@ -18,7 +18,7 @@ resource "aws_route53_record" "frontend" {
   name    = "frontend-dev.gilbraltar.co.uk"
   type    = "A"
   ttl     = 30
-  records = [aws_instance.frontent.private_ip]
+  records = [aws_instance.frontend.private_ip]
 }
 
 output "frontend" {
@@ -72,7 +72,7 @@ resource "aws_route53_record" "redis" {
   name    = "redis-dev.gilbraltar.co.uk"
   type    = "A"
   ttl     = 30
-  records = [aws_instance.reedis.private_ip]
+  records = [aws_instance.redis.private_ip]
 }
 
 resource "aws_instance" "user" {
