@@ -7,11 +7,11 @@ data "aws_ami" "centos" {
 data "aws_security_group" "allow-all" {
   name = "allow-all"
 }
-variable "instance_type" {
-  default = "t2.micro"
-}
+# variable "instance_type" {
+#   default = "t2.micro"
+# }
 
-variable "component" {
+variable "components" {
   default = {
     frontend = {
       name = "frontend"
@@ -59,34 +59,43 @@ variable "component" {
     }
   }
 }
-
-variable "components" {
-  default = [ "frontend", "mongodb", "catalogue" ]
-}
-  resource "aws_instance" "instance" {
-  count         = length(var.components)
+resource "aws_instance" "instance" {
+  for_each = var.components
   ami           = data.aws_ami.centos.image_id
-  instance_type = var.instance_type
+  instance_type = each.value["instance_type"]
   vpc_security_group_ids = [ data.aws_security_group.allow-all.id ]
 
   tags = {
-    Name = var.components[count.index]
+    Name = each.value["name"]
   }
 }
 
-variable "components" {
-  default = [ "frontend", "mongodb", "catalogue" ]
+resource "aws_route53_record" "records" {
+  for_each = var.components
+  zone_id = "Z09569901LP0VHA42NP6C"
+  name    = "${each.value["name"]}-dev.gilbraltar.co.uk"
+  type    = "A"
+  ttl     = 30
+  records = [aws_instance.instance[each.value["name"]].private_ip]
 }
-  resource "aws_instance" "instance" {
-  count         = length(var.components)
-  ami           = data.aws_ami.centos.image_id
-  instance_type = var.instance_type
-  vpc_security_group_ids = [ data.aws_security_group.allow-all.id ]
 
-  tags = {
-    Name = var.components[count.index]
-  }
+output "var.frontend" {
+    value = aws_instance.frontend.public_ip
 }
+
+# variable "components" {
+#   default = [ "frontend", "mongodb", "catalogue" ]
+# }
+#   resource "aws_instance" "instance" {
+#   count         = length(var.components)
+#   ami           = data.aws_ami.centos.image_id
+#   instance_type = var.instance_type
+#   vpc_security_group_ids = [ data.aws_security_group.allow-all.id ]
+
+#   tags = {
+#     Name = var.components[count.index]
+#   }
+# }
 
 # resource "aws_instance" "frontend" {
 #   ami           = data.aws_ami.centos.image_id
