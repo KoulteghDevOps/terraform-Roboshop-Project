@@ -79,10 +79,6 @@ resource "aws_route53_record" "records" {
   records = [aws_instance.instance[each.value["name"]].private_ip]
 }
 
-output "frontend" {
-    value = aws_instance.frontend.public_ip
-}
-
 # variable "components" {
 #   default = [ "frontend", "mongodb", "catalogue" ]
 # }
