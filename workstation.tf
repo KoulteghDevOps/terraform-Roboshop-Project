@@ -11,9 +11,7 @@
 #   default = "t2.micro"
 # }
 
-variable "components" {
-  default = {}
-}
+variable "components" {}
 
 resource "aws_instance" "instance" {
   for_each = var.components
