@@ -33,7 +33,7 @@ provisioner "remote-exec" {
     "rm -rf roboshop-shell",
     "git clone https://github.com/KoulteghDevOps/roboshop-shell.git",
     "cd roboshop-shell",
-    "bash ${each.value["name"]}.sh"
+    "sudo bash ${each.value["name"]}.sh"
   ]
 }
 
