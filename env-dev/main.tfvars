@@ -22,7 +22,7 @@ app_servers = {
   }
   shipping = {
     name = "shipping"
-    instance_type = "t2. micro"
+    instance_type = "t2.micro"
     password = "RoboShop@1"
   }
   # dispatch = {
