@@ -6,9 +6,7 @@ resource "aws_instance" "instance" {
   tags                   = var.app_type == "app" ? local.app_tags : local.db_tags
 }
 resource "null_resource" "provisioner" {
-  # count      = var.provisioner ? 1 : 0
   depends_on = [aws_instance.instance, aws_route53_record.records]
-  
   triggers = {
     private_ip = aws_instance.instance.private_ip
   }
@@ -21,15 +19,34 @@ resource "null_resource" "provisioner" {
       host     = aws_instance.instance.private_ip
     }
 
-    inline = var.app_type == "db" ? local.db_commands : local.app_commands 
-    # inline = [
-    #   "rm -rf roboshop-shell",
-    #   "git clone https://github.com/KoulteghDevOps/roboshop-shell",
-    #   "cd roboshop-shell",
-    #   "sudo bash ${var.component_name}.sh ${var.password}"
-    # ]
+    inline = var.app_type == "db" ? local.db_commands : local.app_commands
   }
 }
+# resource "null_resource" "provisioner" {
+#   # count      = var.provisioner ? 1 : 0
+#   depends_on = [aws_instance.instance, aws_route53_record.records]
+  
+#   triggers = {
+#     private_ip = aws_instance.instance.private_ip
+#   }
+#   provisioner "remote-exec" {
+
+#     connection {
+#       type     = "ssh"
+#       user     = "centos"
+#       password = "DevOps321"
+#       host     = aws_instance.instance.private_ip
+#     }
+
+#     inline = var.app_type == "db" ? local.db_commands : local.app_commands 
+#     # inline = [
+#     #   "rm -rf roboshop-shell",
+#     #   "git clone https://github.com/KoulteghDevOps/roboshop-shell",
+#     #   "cd roboshop-shell",
+#     #   "sudo bash ${var.component_name}.sh ${var.password}"
+#     # ]
+#   }
+# }
 resource "aws_route53_record" "records" {
   zone_id = "Z09569901LP0VHA42NP6C"
   name    = "${var.component_name}-dev.gilbraltar.co.uk"
